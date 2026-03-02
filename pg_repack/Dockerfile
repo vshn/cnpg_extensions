@@ -1,29 +1,29 @@
-ARG PG_VERSION=18
-ARG EXT_VERSION=1.5.3
+ARG BASE=ghcr.io/cloudnative-pg/postgresql:18-minimal-trixie
+FROM $BASE AS builder
 
-FROM ghcr.io/cloudnative-pg/postgresql:${PG_VERSION} AS source
+ARG PG_MAJOR
+ARG EXT_VERSION
 
-ARG PG_VERSION=18
-ARG EXT_VERSION=1.5.3
+USER 0
 
-USER root
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    postgresql-${PG_VERSION}-repack \
-  && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+	apt-get install -y --no-install-recommends "postgresql-${PG_MAJOR}-repack=${EXT_VERSION}" && \
+	rm -rf /var/lib/apt/lists/*
 
 FROM scratch
+ARG PG_MAJOR
 
-ARG PG_VERSION=18
-ARG EXT_VERSION=1.5.3
+# Licenses
+COPY --from=builder /usr/share/doc/postgresql-${PG_MAJOR}-repack/copyright /licenses/postgresql-${PG_MAJOR}-repack/
 
-# https://packages.debian.org/sid/amd64/postgresql-18-repack/filelist
-COPY --from=source /usr/lib/postgresql/${PG_VERSION}/lib/bitcode/pg_repack.index.bc /lib/pg_repack/
-COPY --from=source /usr/lib/postgresql/${PG_VERSION}/lib/bitcode/pg_repack/pgut/pgut-spi.bc /lib/pg_repack/
-COPY --from=source /usr/lib/postgresql/${PG_VERSION}/lib/bitcode/pg_repack/repack.bc /lib/pg_repack/
-COPY --from=source /usr/lib/postgresql/${PG_VERSION}/lib/pg_repack.so /lib/
+# Libraries
+COPY --from=builder /usr/lib/postgresql/${PG_MAJOR}/lib/pg_repack.so /lib/
+COPY --from=builder /usr/lib/postgresql/${PG_MAJOR}/lib/bitcode/ /lib/bitcode/
 
-COPY --from=source /usr/share/postgresql/${PG_VERSION}/extension/pg_repack--${EXT_VERSION}.sql /share/extension/
-COPY --from=source /usr/share/postgresql/${PG_VERSION}/extension/pg_repack.control /share/extension/
+# Share
+COPY --from=builder /usr/share/postgresql/${PG_MAJOR}/extension/pg_repack* /share/extension/
 
-COPY --from=source /usr/lib/postgresql/${PG_VERSION}/bin/pg_repack /bin/
+# Binary
+COPY --from=builder /usr/lib/postgresql/${PG_MAJOR}/bin/pg_repack /bin/
+
+USER 65532:65532

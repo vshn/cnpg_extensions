@@ -1,21 +1,23 @@
 local_registry := "registry.127.0.0.1.nip.io:8443"
+arch := `uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/'`
 
 # List available recipes
 help:
     @just --list
 
-# Build an extension image locally
-# Usage: just build pg_repack 18 1.5.3
-build ext pg_version ext_version:
-    docker build \
-      --build-arg PG_VERSION={{ pg_version }} \
-      --build-arg EXT_VERSION={{ ext_version }} \
-      -t {{ ext }}:pg{{ pg_version }}-{{ ext_version }} \
-      -f {{ ext }}/Dockerfile \
-      .
+# Build an extension image locally (native platform, loads into docker daemon)
+# Usage: just build pg_repack
+build ext:
+    docker buildx bake \
+      -f {{ ext }}/metadata.hcl \
+      -f docker-bake.hcl \
+      --set "*.platforms=linux/{{ arch }}" \
+      --load
 
-# Build and push to local OCI registry
-# Usage: just push-local pg_repack 18 1.5.3
-push-local ext pg_version ext_version: (build ext pg_version ext_version)
-    docker tag {{ ext }}:pg{{ pg_version }}-{{ ext_version }} {{ local_registry }}/{{ ext }}:pg{{ pg_version }}-{{ ext_version }}
-    docker push {{ local_registry }}/{{ ext }}:pg{{ pg_version }}-{{ ext_version }}
+# Build and push to local OCI registry (multi-platform)
+# Usage: just push-local pg_repack
+push-local ext:
+    registry={{ local_registry }} docker buildx bake \
+      -f {{ ext }}/metadata.hcl \
+      -f docker-bake.hcl \
+      --push

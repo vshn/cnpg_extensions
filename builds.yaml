@@ -1,6 +1,0 @@
-# All pg_version x ext_version combinations are built for each extension.
-# Each combination produces: ghcr.io/<repo>/<extension>:pg<pg_version>-<ext_version>
-
-- extension: pg_repack
-  pg_versions: ["18"]
-  ext_versions: ["1.5.3"]
