@@ -1,0 +1,24 @@
+metadata = {
+  name                     = "{{ .Name }}"
+  sql_name                 = "{{ .SQLName }}"
+  image_name               = "{{ .Name }}"
+  licenses                 = ["Apache-2.0"]
+  shared_preload_libraries = []
+  extension_control_path   = []
+  dynamic_library_path     = []
+  ld_library_path          = []
+  auto_update_os_libs      = false
+  required_extensions      = []
+  create_extension         = true
+
+  versions = {
+    {{- range $distro := .Distros}}
+    {{ $distro }} = {
+        {{- range $version := $.Versions}}
+        // renovate: suite={{ $distro }}-pgdg depName={{ replaceAll $.Package "%version%" $version }}
+        "{{ $version }}" = "<package-version-here>"
+        {{- end}}
+    }
+    {{- end}}
+  }
+}

@@ -21,3 +21,15 @@ push-local ext:
       -f {{ ext }}/metadata.hcl \
       -f docker-bake.hcl \
       --push
+
+# Scaffold a new extension directory from templates
+# Usage: just scaffold pg_repack
+# Use PACKAGE to override the Debian package pattern (default: postgresql-%version%-<name>)
+# Use DISTROS/VERSIONS to override defaults
+scaffold ext:
+    go run ./generate \
+      -name {{ ext }} \
+      ${PACKAGE:+-package "$PACKAGE"} \
+      ${SQL_NAME:+-sql-name "$SQL_NAME"} \
+      ${DISTROS:+-distros "$DISTROS"} \
+      ${VERSIONS:+-versions "$VERSIONS"}
