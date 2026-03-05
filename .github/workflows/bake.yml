@@ -7,9 +7,7 @@ on:
       extension_name:
         description: "The PostgreSQL extension to build (directory name)"
         required: true
-        type: choice
-        options:
-          - pg_repack
+        type: string
 
 defaults:
   run:
