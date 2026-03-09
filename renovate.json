@@ -1,0 +1,55 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "customManagers:githubActionsVersions"
+  ],
+  "enabledManagers": [
+    "github-actions",
+    "custom.regex"
+  ],
+  "customManagers": [
+    {
+      "description": "Updates the deb package versions in metadata.hcl files",
+      "customType": "regex",
+      "managerFilePatterns": [
+        "**/*.hcl"
+      ],
+      "matchStrings": [
+        "\\/\\/\\s*renovate:\\s*?(suite=(?<suite>.*?))?\\s*depName=(?<depName>.*?)?\\s*\"[A-Za-z0-9_-]+\"\\s*=\\s*\"(?<currentValue>.*)\""
+      ],
+      "registryUrlTemplate": "https://download.postgresql.org/pub/repos/apt?suite={{#if suite}}{{suite}}{{else}}stable{{/if}}&components=main&binaryArch=amd64",
+      "datasourceTemplate": "deb"
+    },
+    {
+      "description": "Updates the extension image versions in README.md files",
+      "customType": "regex",
+      "managerFilePatterns": [
+        "**/README.md"
+      ],
+      "matchStrings": [
+        "#\\s*renovate:\\s*?(suite=(?<suite>.*?))?\\s*depName=(?<depName>.*?)?\\s*reference: ghcr.io\\/vshn\\/[A-Za-z0-9_-]+:(?<currentValue>([0-9]\\.?)+)",
+        "#\\s*renovate:\\s*?(suite=(?<suite>.*?))?\\s*depName=(?<depName>.*?)?\\s*version: '(?<currentValue>([0-9]\\.?)+)'"
+      ],
+      "registryUrlTemplate": "https://download.postgresql.org/pub/repos/apt?suite={{#if suite}}{{suite}}{{else}}stable{{/if}}&components=main&binaryArch=amd64",
+      "datasourceTemplate": "deb",
+      "extractVersionTemplate": "^(?<version>[^-+]+)"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": [
+        "github-tags"
+      ],
+      "matchUpdateTypes": [
+        "digest",
+        "pinDigest",
+        "major",
+        "minor",
+        "patch"
+      ],
+      "groupName": "all github actions",
+      "pinDigests": false
+    }
+  ]
+}
