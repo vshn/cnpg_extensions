@@ -11,7 +11,7 @@ build ext:
     docker buildx bake \
       -f {{ ext }}/metadata.hcl \
       -f docker-bake.hcl \
-      --set "*.platforms=linux/{{ arch }}" \
+      --set "*.platform=linux/{{ arch }}" \
       --load
 
 # Build and push to local OCI registry (multi-platform)
