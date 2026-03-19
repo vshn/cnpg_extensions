@@ -9,7 +9,6 @@ USER 0
 RUN set -eux && \
 	# Initial system libraries
 	ldconfig -p | awk '{print $NF}' | grep '^/' | sort | uniq > /tmp/base-image-libs.out && \
-
   # Install PL/Python3
   apt-get update && apt-get install -y --no-install-recommends \
       "postgresql-plpython3-${PG_MAJOR}=${EXT_VERSION}" && \
