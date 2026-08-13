@@ -16,11 +16,11 @@ metadata = {
   versions = {
     bookworm = {
         // renovate: suite=bookworm-pgdg depName=postgresql-plpython3-18
-        "18" = "18.3-1.pgdg12+1"
+        "18" = "18.6-1.pgdg12+2"
     }
     trixie = {
         // renovate: suite=trixie-pgdg depName=postgresql-plpython3-18
-        "18" = "18.3-1.pgdg13+1"
+        "18" = "18.6-1.pgdg13+2"
     }
   }
 }

@@ -28,7 +28,7 @@ spec:
     - name: plpython3u
       image:
         # renovate: suite=bookworm-pgdg depName=postgresql-plpython3-18
-        reference: ghcr.io/vshn/plpython3u:1.0-18-bookworm
+        reference: ghcr.io/vshn/plpython3u:18.6-18-bookworm
       ld_library_path:
         - system
 ```
@@ -51,7 +51,7 @@ spec:
   extensions:
   - name: plpython3u
     # renovate: suite=bookworm-pgdg depName=postgresql-plpython3-18
-    version: '1.0'
+    version: '18.6'
 ```
 
 ### 3. Verify installation
