@@ -18,7 +18,7 @@ permissions: {}
 jobs:
   change-triage:
     name: Check changed files
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       matrix: ${{ steps.get-matrix.outputs.matrix }}
     steps:
